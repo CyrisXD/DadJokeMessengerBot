@@ -46,22 +46,23 @@ function handleMessage(sender_psid, received_message) {
     if (received_message.text) {
 
         request({
-            "uri": 'https://icanhazdadjoke.com',
-            "headers": {
-                "Accept": 'text/plain'
-            }
-        },
-        function (error, response, body) {
-            console.log('error:', error); // Print the error if one occurred
-            response = {
-                "text": body
-            }
-        });
+                "uri": 'https://icanhazdadjoke.com',
+                "headers": {
+                    "Accept": 'text/plain'
+                }
+            },
+            function (error, response, body) {
+                console.log('error:', error); // Print the error if one occurred
+                response = {
+                    "text": body
+                }
+                // Sends the response message
+                callSendAPI(sender_psid, response);
+            });
 
     }
 
-    // Sends the response message
-    callSendAPI(sender_psid, response);
+
 }
 
 
