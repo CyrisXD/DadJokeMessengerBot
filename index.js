@@ -29,7 +29,7 @@ function callSendAPI(sender_psid, response) {
     }, (err, res, body) => {
         if (!err) {
             console.log('message sent!')
-            console.log("MESSAGE FROM SENDER" +  JSON.stringify(request_body));
+            console.log("MESSAGE FROM BOT" +  JSON.stringify(request_body));
         } else {
             console.error("Unable to send message:" + err);
         }
@@ -50,6 +50,7 @@ function handleMessage(sender_psid, received_message) {
                 }
             },
             function (error, response, body) {
+                console.log("THIS HAS RUN");
                 console.log('error:', error); // Print the error if one occurred
                 response = {
                     "text": body
@@ -86,7 +87,7 @@ app.post('/webhook', (req, res) => {
 
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
-            if (webhookEvent.message) {
+            if (webhookEvent.message && sender_psid !== 2048252168522145) {
                 handleMessage(sender_psid, webhookEvent.message);
             } 
        
