@@ -8,10 +8,6 @@ const
     app = express().use(bodyParser.json()); // creates express http server
 
 
-
-
-
-
 function callSendAPI(sender_psid, response) {
 
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
@@ -49,16 +45,24 @@ function handleMessage(sender_psid, received_message) {
     // Check if the message contains text
     if (received_message.text) {
 
-        // Create the payload for a basic text messages
-        response = {
-            "text": `You sent the message: "${received_message.text}". Now send me an image!`
-        }
+        request({
+            "uri": 'https://icanhazdadjoke.com',
+            "headers": {
+                "Accept": 'text/plain'
+            }
+        },
+        function (error, response, body) {
+            console.log('error:', error); // Print the error if one occurred
+            response = {
+                "text": body
+            }
+        });
+
     }
 
     // Sends the response message
     callSendAPI(sender_psid, response);
 }
-
 
 
 
