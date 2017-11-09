@@ -29,7 +29,7 @@ function callSendAPI(sender_psid, response) {
     }, (err, res, body) => {
         if (!err) {
             console.log('message sent!')
-            console.log("MESSAGE FROM BOT" +  JSON.stringify(request_body));
+            console.log("MESSAGE FROM BOT" + JSON.stringify(request_body));
         } else {
             console.error("Unable to send message:" + err);
         }
@@ -64,34 +64,52 @@ function handleMessage(sender_psid, received_message) {
 
 }
 
+function handlePostback(sender_psid, received_postback) {
+    let response;
+    
+    // Get the payload for the postback
+    let payload = received_postback.payload;
+  
+    // Set the response based on the postback payload
+    if (payload === 'yes') {
+      response = { "text": "Thanks!" }
+    } else if (payload === 'no') {
+      response = { "text": "Oops, try sending another image." }
+    }
+    // Send the message to acknowledge the postback
+    callSendAPI(sender_psid, response);
+  }
+
 
 // Creates the endpoint for our webhook 
 app.post('/webhook', (req, res) => {
-    console.log("POST WEBHOOK COUNT");
+
     let body = req.body;
 
     // Checks this is an event from a page subscription
     if (body.object === 'page') {
 
         // Iterates over each entry - there may be multiple if batched
+        body.entry.forEach(function (entry) {
 
-            // Gets the message. entry.messaging is an array, but 
-            // will only ever contain one message, so we get index 0
-            let webhookEvent = body.entry[0].messaging[0];
-           // console.log(webhookEvent);
+            // Gets the body of the webhook event
+            let webhook_event = entry.messaging[0];
+            console.log(webhook_event);
+
 
             // Get the sender PSID
-            let sender_psid = webhookEvent.sender.id;
-           // console.log('Sender PSID: ' + sender_psid);
-
+            let sender_psid = webhook_event.sender.id;
+            console.log('Sender PSID: ' + sender_psid);
 
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
-            if (webhookEvent.message && sender_psid !== 2048252168522145) {
-                console.log("Actual Message : " + JSON.stringify(webhookEvent.message.text));
-                handleMessage(sender_psid, webhookEvent.message);
-            } 
-       
+            if (webhook_event.message) {
+                handleMessage(sender_psid, webhook_event.message);
+            } else if (webhook_event.postback) {
+                handlePostback(sender_psid, webhook_event.postback);
+            }
+
+        });
 
         // Returns a '200 OK' response to all requests
         res.status(200).send('EVENT_RECEIVED');
