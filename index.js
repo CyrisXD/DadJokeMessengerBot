@@ -5,12 +5,10 @@ const
     express = require('express'),
     bodyParser = require('body-parser'),
     request = require('request'),
-    app = express().use(bodyParser.json()); // creates express http server
-
+    app = express().use(bodyParser.json()), // creates express http server
+    PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
 function callSendAPI(sender_psid, response) {
-
-    const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
     // Construct the message body
     let request_body = {
@@ -31,7 +29,7 @@ function callSendAPI(sender_psid, response) {
     }, (err, res, body) => {
         if (!err) {
             console.log('message sent!')
-            console.log(JSON.stringify(request_body));
+            console.log("MESSAGE FROM SENDER" +  JSON.stringify(request_body));
         } else {
             console.error("Unable to send message:" + err);
         }
@@ -66,8 +64,6 @@ function handleMessage(sender_psid, received_message) {
 }
 
 
-
-
 // Creates the endpoint for our webhook 
 app.post('/webhook', (req, res) => {
 
@@ -79,27 +75,23 @@ app.post('/webhook', (req, res) => {
         // Iterates over each entry - there may be multiple if batched
         body.entry.forEach(function (entry) {
 
+            console.log("ENTRY" + JSON.stringify(entry));
+
             // Gets the message. entry.messaging is an array, but 
             // will only ever contain one message, so we get index 0
             let webhookEvent = entry.messaging[0];
-            console.log(webhookEvent);
+           // console.log(webhookEvent);
 
             // Get the sender PSID
             let sender_psid = webhookEvent.sender.id;
-            console.log('Sender PSID: ' + sender_psid);
+           // console.log('Sender PSID: ' + sender_psid);
 
 
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
             if (webhookEvent.message) {
-                console.log("START MESSAGE");
                 handleMessage(sender_psid, webhookEvent.message);
-                console.log("END MESSAGE");
-            } else if (webhookEvent.postback) {
-                console.log("START POSTBACK");
-                handlePostback(sender_psid, webhookEvent.postback);
-                console.log("END MESSAGE");
-            }
+            } 
         });
 
         // Returns a '200 OK' response to all requests
