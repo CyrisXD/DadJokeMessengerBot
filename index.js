@@ -88,6 +88,7 @@ app.post('/webhook', (req, res) => {
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
             if (webhookEvent.message && sender_psid !== 2048252168522145) {
+                console.log("Actual Message : " + JSON.stringify(webhookEvent.message.text));
                 handleMessage(sender_psid, webhookEvent.message);
             } 
        
