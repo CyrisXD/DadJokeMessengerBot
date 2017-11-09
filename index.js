@@ -13,6 +13,9 @@ const
 
 
 function callSendAPI(sender_psid, response) {
+
+    const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+
     // Construct the message body
     let request_body = {
         "recipient": {
@@ -105,8 +108,6 @@ app.get('/', (req, res) => {
 
 // Adds support for GET requests to our webhook
 app.get('/webhook', (req, res) => {
-
-    const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
     // Your verify token. Should be a random string.
     let VERIFY_TOKEN = "super_secret"
